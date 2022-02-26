@@ -1,3 +1,4 @@
+
 from connectors.core.connector import Connector, ConnectorError, get_logger
 import requests
 import json
@@ -8,6 +9,7 @@ import publicsuffix2
 import re
 import dateutil.parser
 import validators
+from urllib.parse import urlparse
 
 TMP_FILE = '/tmp/usom.cache.json'
 logger = get_logger('usom')
@@ -73,6 +75,13 @@ def lookup(config, params):
 
 def _check_health(config):
     try:
-        return lookup(config, {"url": "8.8.8.8"}) == {"found": False}
+        url = config.get("url")
+        verify = config.get("verify")
+        domain = urlparse(url).netloc
+        protocol = "https://" if verify else "http://"
+        response = requests.get(f"{protocol}{domain}", verify=verify)
+        if response.status_code != 200:
+            raise ConnectorError("Unable to connect USOM")
+        return True
     except Exception as e:
         raise ConnectorError("Unable to connect USOM {0}".format(e))
