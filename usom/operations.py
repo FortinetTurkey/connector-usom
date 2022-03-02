@@ -1,4 +1,3 @@
-
 from connectors.core.connector import Connector, ConnectorError, get_logger
 import requests
 import json
@@ -85,3 +84,8 @@ def _check_health(config):
         return True
     except Exception as e:
         raise ConnectorError("Unable to connect USOM {0}".format(e))
+
+
+operations = {
+    'lookup': lookup
+}
