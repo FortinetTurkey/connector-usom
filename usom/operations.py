@@ -51,6 +51,7 @@ def lookup(config, params):
         url = re.sub("https?://", "", url)
         path = url
         fqdn = url.split("/")[0]
+        fqdn = fqdn.split("@")[-1]
         domain = ""
         if not validators.ipv4(url):
             domain = publicsuffix2.get_sld(fqdn)
